@@ -1,0 +1,583 @@
+<modification>
+    <id>Image Option Preview</id>
+    <version>1.0</version>
+    <vqmver>2.X</vqmver>
+    <author>gun88</author>
+    <file path="catalog/controller/product/" name="search.php,category.php,special.php,manufacturer.php">
+        <operation info="Image Option Preview">
+            <search position="after"><![CDATA[$data['products'] = array();]]></search>
+            <add><![CDATA[          //gun88
+            $data['silvergold_theme'] = $this->config->get('config_theme')=="silvergold";
+            // end gun88]]>
+            </add>
+        </operation>
+        <operation info="Image Option Preview">
+            <search position="before"><![CDATA[foreach ($results as $result) {]]></search>
+            <add><![CDATA[
+                // gun88
+                
+            if ((((int) $this->config->get('image_option_preview_enabled')) === 1)) {
+                $this->load->model('module/image_option_preview');
+                $image_option_preview_option_name = $this->model_module_image_option_preview->getOptionName($this->config->get('image_option_preview_option_id'), (int) $this->config->get('config_language_id'));
+                $data['image_option_preview_style'] = $this->config->get('image_option_preview_style');
+            }
+            // end gun88
+                ]]>
+            </add>
+        </operation>
+        <operation info="Image Option Preview">
+            <search position="before"><![CDATA[$data['products'][] = array(]]></search>
+            <add><![CDATA[
+                // gun88
+                
+                $image_options = (((int) $this->config->get('image_option_preview_enabled')) === 1 ) ?
+                        $this->model_module_image_option_preview->getImageOptionFor($result['product_id'], $this->config->get('image_option_preview_option_id'), (int) $this->config->get('config_language_id'), $this->config->get('image_option_preview_show_zero')) : null;
+                if ($image_options) {
+                    foreach ($image_options['data'] as $key => $image_option) {
+                        if ($image_option['image']) {
+                            $option_image = $this->model_tool_image->resize($image_option['image'], $this->config->get('image_option_preview_thumb_width'), $this->config->get('image_option_preview_thumb_height'));
+                        } else {
+                            $option_image = $this->model_tool_image->resize('placeholder.png', $this->config->get('image_option_preview_thumb_width'), $this->config->get('image_option_preview_thumb_height'));
+                        }
+                        $image_options['data'][$key]['image'] = $option_image;
+                    }
+                    if ($this->config->get('image_option_preview_show_name') == "1") {
+                        $image_options['name'] = $image_option_preview_option_name;
+                    }
+                    
+                }
+                // fine gun88
+                ]]>
+            </add>
+        </operation>
+        <operation info="Image Option Preview">
+            <search position="after"><![CDATA[$data['products'][] = array(]]></search>
+            <add><![CDATA[
+                // gun88
+                    'image_options' => $image_options,
+                    // end gun88
+                ]]>
+            </add>
+        </operation>
+    </file>
+    <file path="catalog/controller/product/" name="product.php">
+        <operation info="Image Option Preview">
+            <search position="after"><![CDATA[$data['products'] = array();]]></search>
+            <add><![CDATA[          //gun88
+            $data['silvergold_theme'] = $this->config->get('config_theme')=="silvergold";
+            // end gun88
+            ]]>
+            </add>
+        </operation>
+        <operation info="Image Option Preview">
+            <search position="before" index='2'><![CDATA[foreach ($results as $result) {]]></search>
+            <add><![CDATA[
+                // gun88
+                
+            if ((((int) $this->config->get('image_option_preview_enabled')) === 1)) {
+                $this->load->model('module/image_option_preview');
+                $image_option_preview_option_name = $this->model_module_image_option_preview->getOptionName($this->config->get('image_option_preview_option_id'), (int) $this->config->get('config_language_id'));
+                $data['image_option_preview_style'] = $this->config->get('image_option_preview_style');
+            }
+            // end gun88
+                ]]>
+            </add>
+        </operation>
+        <operation info="Image Option Preview">
+            <search position="before"><![CDATA[$data['products'][] = array(]]></search>
+            <add><![CDATA[
+                // gun88
+                
+                $image_options = (((int) $this->config->get('image_option_preview_enabled')) === 1 ) ?
+                        $this->model_module_image_option_preview->getImageOptionFor($result['product_id'], $this->config->get('image_option_preview_option_id'), (int) $this->config->get('config_language_id'), $this->config->get('image_option_preview_show_zero')) : null;
+                if ($image_options) {
+                    foreach ($image_options['data'] as $key => $image_option) {
+                        if ($image_option['image']) {
+                            $option_image = $this->model_tool_image->resize($image_option['image'], $this->config->get('image_option_preview_thumb_width'), $this->config->get('image_option_preview_thumb_height'));
+                        } else {
+                            $option_image = $this->model_tool_image->resize('placeholder.png', $this->config->get('image_option_preview_thumb_width'), $this->config->get('image_option_preview_thumb_height'));
+                        }
+                        $image_options['data'][$key]['image'] = $option_image;
+                    }
+                    if ($this->config->get('image_option_preview_show_name') == "1") {
+                        $image_options['name'] = $image_option_preview_option_name;
+                    }
+                    
+                }
+                // fine gun88
+                ]]>
+            </add>
+        </operation>
+        <operation info="Image Option Preview">
+            <search position="after"><![CDATA[$data['products'][] = array(]]></search>
+            <add><![CDATA[
+                // gun88
+                    'image_options' => $image_options,
+                    // end gun88
+                ]]>
+            </add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/*/template/product/" name="search.tpl,special.tpl,category.tpl,manufacturer_info.tpl">
+        <operation info="Image Option Preview">
+            <search position="after"><![CDATA[<?php echo $header; ?>]]></search>
+            <add><![CDATA[
+               <!-- gun88 -->
+                <?php if (isset($image_option_preview_style)) { echo "<style>$image_option_preview_style</style>";} ?>
+                <!-- end gun88 -->
+                ]]>
+            </add>
+        </operation>
+        <operation info="Image Option Preview">
+            <search position="after" offset="16"><![CDATA[<button type="button" data-toggle="tooltip" title="<?php echo $button_compare; ?>" onclick="compare.add('<?php echo $product['product_id']; ?>');"><i class="fa fa-exchange"></i></button>]]></search>
+            <add><![CDATA[
+               <!-- gun88 -->
+                        <?php if ($silvergold_theme && isset($product['image_options'])) {  ?>
+
+                        <ul class="nav nav-pills pull-right image-option-preview">
+                            <?php if (isset($product['image_options']['name'])) {  ?>
+                            <li role="presentation">
+                                <p><?php echo $product['image_options']['name']; ?></p>
+                            </li>
+                            <?php } ?>
+                            <?php foreach ($product['image_options']['data'] as $image_option) {  ?>
+
+                            <?php if ($image_option['quantity'] <= 0) {  ?>
+                            <li role="presentation" class="disabled">
+                                <a href="#" class="thumbnail" product_option_value_id="<?php echo $image_option['product_option_value_id']; ?>" title="<?php echo $image_option['name']; ?>">
+                                    <img src="<?php echo $image_option['image']; ?>" alt="<?php echo $image_option['name']; ?>">
+                                </a>
+                            </li>
+                            <?php } else { ?>
+                            <li role="presentation">
+                                <a href="#" class="thumbnail " product_option_value_id="<?php echo $image_option['product_option_value_id']; ?>" title="<?php echo $image_option['name']; ?>"  data-form="form-image_option_preview_<?php echo $product['product_id']; ?>">
+                                    <img src="<?php echo $image_option['image']; ?>" alt="<?php echo $image_option['name']; ?>">
+                                </a>
+                            </li>
+                            <?php } ?>
+                            </li>
+                            <?php } ?>
+                        </ul>
+                        <form action="<?php echo $product['href']; ?>" method="post" enctype="multipart/form-data" id="form-image_option_preview_<?php echo $product['product_id']; ?>">
+                            <input type='hidden' name='iop_product_option_value_id' id='iop_product_option_value_id' value=''>
+                        </form>
+                        <?php } ?>
+
+                        <!-- end gun88 -->
+                ]]>
+            </add>
+        </operation>
+        <operation info="Image Option Preview">
+            <search position="before" offset="4"><![CDATA[<button type="button" data-toggle="tooltip" title="<?php echo $button_compare; ?>" onclick="compare.add('<?php echo $product['product_id']; ?>');"><i class="fa fa-exchange"></i></button>]]></search>
+            <add><![CDATA[
+               <!-- gun88 -->
+                        <?php if (!$silvergold_theme && isset($product['image_options'])) {  ?>
+
+                        <ul class="nav nav-pills pull-right image-option-preview">
+                            <?php if (isset($product['image_options']['name'])) {  ?>
+                            <li role="presentation">
+                                <p><?php echo $product['image_options']['name']; ?></p>
+                            </li>
+                            <?php } ?>
+                            <?php foreach ($product['image_options']['data'] as $image_option) {  ?>
+
+                            <?php if ($image_option['quantity'] <= 0) {  ?>
+                            <li role="presentation" class="disabled">
+                                <a href="#" class="thumbnail" product_option_value_id="<?php echo $image_option['product_option_value_id']; ?>" title="<?php echo $image_option['name']; ?>">
+                                    <img src="<?php echo $image_option['image']; ?>" alt="<?php echo $image_option['name']; ?>">
+                                </a>
+                            </li>
+                            <?php } else { ?>
+                            <li role="presentation">
+                                <a href="#" class="thumbnail " product_option_value_id="<?php echo $image_option['product_option_value_id']; ?>" title="<?php echo $image_option['name']; ?>"  data-form="form-image_option_preview_<?php echo $product['product_id']; ?>">
+                                    <img src="<?php echo $image_option['image']; ?>" alt="<?php echo $image_option['name']; ?>">
+                                </a>
+                            </li>
+                            <?php } ?>
+                            </li>
+                            <?php } ?>
+                        </ul>
+                        <form action="<?php echo $product['href']; ?>" method="post" enctype="multipart/form-data" id="form-image_option_preview_<?php echo $product['product_id']; ?>">
+                            <input type='hidden' name='iop_product_option_value_id' id='iop_product_option_value_id' value=''>
+                        </form>
+                        <?php } ?>
+
+                        <!-- end gun88 -->
+                ]]>
+            </add>
+        </operation>
+        <operation info="Image Option Preview">
+            <search position="before"><![CDATA[<?php echo $footer; ?>]]></search>
+            <add><![CDATA[
+                    <!-- gun88 -->
+                    <script type="text/javascript">
+                    $('.image-option-preview a').click(function(e){
+                        e.preventDefault();
+                        var target = $( event.target );
+                        if (!$(this).parent("li").hasClass("disabled")){
+                            var productOptionValueId = $(this).attr("product_option_value_id");
+                            var formName = $(this).attr("data-form");
+                            $("#"+formName+" #iop_product_option_value_id").val(productOptionValueId);
+                            $("#"+formName).submit();
+                        }
+                    });
+                    </script>
+                    <!-- end gun88 -->
+                ]]>
+            </add>
+        </operation>
+    </file>
+    <file path="catalog/controller/product/" name="product.php">
+        <operation info="Image Option Preview">
+            <search position="after"><![CDATA[public function index() {]]></search>
+            <add><![CDATA[
+                // gun88
+                if (isset($this->request->post['iop_product_option_value_id'])){
+                    $data['iop_product_option_value_id'] = $this->request->post['iop_product_option_value_id'];
+                }
+                // fine gun88
+                ]]>
+            </add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/*/template/product/" name="product.tpl">
+        <operation info="Image Option Preview">
+            <search position="before"><![CDATA[<?php echo $footer; ?>]]></search>
+            <add><![CDATA[
+                <!-- gun88 -->
+                <?php if (isset($iop_product_option_value_id)) { ?>
+                    <script>
+                setTimeout(function(){ 
+                        iop_product_option_value_id = <?php echo $iop_product_option_value_id; ?>;
+                        $('input[value="'+iop_product_option_value_id+'"]').click();
+                 }, 500);
+                    </script>
+                <?php } ?>
+                <!-- end gun88 -->
+                ]]>
+            </add>
+        </operation>
+    </file>
+    
+    
+    <file path="catalog/controller/module/" name="bestseller.php,latest.php,special.php">
+        <operation info="Image Option Preview">
+            <search position="before"><![CDATA[foreach ($results as $result) {]]></search>
+            <add><![CDATA[
+                // gun88
+                $data['silvergold_theme'] = $this->config->get('config_theme')=="silvergold";
+            if ((((int) $this->config->get('image_option_preview_enabled')) === 1)) {
+                $this->load->model('module/image_option_preview');
+                $image_option_preview_option_name = $this->model_module_image_option_preview->getOptionName($this->config->get('image_option_preview_option_id'), (int) $this->config->get('config_language_id'));
+                $data['image_option_preview_style'] = $this->config->get('image_option_preview_style');
+            }
+            // end gun88
+                ]]>
+            </add>
+        </operation>
+        <operation info="Image Option Preview">
+            <search position="before"><![CDATA[$data['products'][] = array(]]></search>
+            <add><![CDATA[
+                // gun88
+                $image_options = (((int) $this->config->get('image_option_preview_enabled')) === 1 ) ?
+                        $this->model_module_image_option_preview->getImageOptionFor($result['product_id'], $this->config->get('image_option_preview_option_id'), (int) $this->config->get('config_language_id'), $this->config->get('image_option_preview_show_zero')) : null;
+                if ($image_options) {
+                    foreach ($image_options['data'] as $key => $image_option) {
+                        if ($image_option['image']) {
+                            $option_image = $this->model_tool_image->resize($image_option['image'], $this->config->get('image_option_preview_thumb_width'), $this->config->get('image_option_preview_thumb_height'));
+                        } else {
+                            $option_image = $this->model_tool_image->resize('placeholder.png', $this->config->get('image_option_preview_thumb_width'), $this->config->get('image_option_preview_thumb_height'));
+                        }
+                        $image_options['data'][$key]['image'] = $option_image;
+                    }
+                    if ($this->config->get('image_option_preview_show_name') == "1") {
+                        $image_options['name'] = $image_option_preview_option_name;
+                    }
+                    
+                }
+                // fine gun88
+                ]]>
+            </add>
+        </operation>
+        <operation info="Image Option Preview">
+            <search position="after"><![CDATA[$data['products'][] = array(]]></search>
+            <add><![CDATA[
+                // gun88
+                    'image_options' => $image_options,
+                    // end gun88
+                ]]>
+            </add>
+        </operation>
+    </file>
+    
+    <file path="catalog/controller/module/" name="featured.php">
+        <operation info="Image Option Preview">
+            <search position="before"><![CDATA[foreach ($products as $product_id) {]]></search>
+            <add><![CDATA[
+                // gun88
+                $data['silvergold_theme'] = $this->config->get('config_theme')=="silvergold";
+            if ((((int) $this->config->get('image_option_preview_enabled')) === 1)) {
+                $this->load->model('module/image_option_preview');
+                $image_option_preview_option_name = $this->model_module_image_option_preview->getOptionName($this->config->get('image_option_preview_option_id'), (int) $this->config->get('config_language_id'));
+                $data['image_option_preview_style'] = $this->config->get('image_option_preview_style');
+            }
+            // end gun88
+                ]]>
+            </add>
+        </operation>
+        <operation info="Image Option Preview">
+            <search position="before"><![CDATA[$data['products'][] = array(]]></search>
+            <add><![CDATA[
+                // gun88
+                $image_options = (((int) $this->config->get('image_option_preview_enabled')) === 1 ) ?
+                        $this->model_module_image_option_preview->getImageOptionFor($product_id, $this->config->get('image_option_preview_option_id'), (int) $this->config->get('config_language_id'), $this->config->get('image_option_preview_show_zero')) : null;
+                if ($image_options) {
+                    foreach ($image_options['data'] as $key => $image_option) {
+                        if ($image_option['image']) {
+                            $option_image = $this->model_tool_image->resize($image_option['image'], $this->config->get('image_option_preview_thumb_width'), $this->config->get('image_option_preview_thumb_height'));
+                        } else {
+                            $option_image = $this->model_tool_image->resize('placeholder.png', $this->config->get('image_option_preview_thumb_width'), $this->config->get('image_option_preview_thumb_height'));
+                        }
+                        $image_options['data'][$key]['image'] = $option_image;
+                    }
+                    if ($this->config->get('image_option_preview_show_name') == "1") {
+                        $image_options['name'] = $image_option_preview_option_name;
+                    }
+                    
+                }
+                // fine gun88
+                ]]>
+            </add>
+        </operation>
+        <operation info="Image Option Preview">
+            <search position="after"><![CDATA[$data['products'][] = array(]]></search>
+            <add><![CDATA[
+                // gun88
+                    'image_options' => $image_options,
+                    // end gun88
+                ]]>
+            </add>
+        </operation>
+    </file>
+    
+    <file path="catalog/view/theme/*/template/module/" name="bestseller.tpl,featured.tpl,latest.tpl,special.tpl">
+        <operation info="Image Option Preview">
+            <search position="after"><![CDATA[<h3><?php echo $heading_title; ?></h3>]]></search>
+            <add><![CDATA[
+               <!-- gun88 -->
+                <?php if (isset($image_option_preview_style)) { echo "<style>$image_option_preview_style</style>";} ?>
+                <!-- end gun88 -->
+                ]]>
+            </add>
+        </operation>
+        <operation info="Image Option Preview">
+            <search position="after" offset="16"><![CDATA[<button type="button" data-toggle="tooltip" title="<?php echo $button_compare; ?>" onclick="compare.add('<?php echo $product['product_id']; ?>');"><i class="fa fa-exchange"></i></button>]]></search>
+            <add><![CDATA[
+               <!-- gun88 -->
+                        <?php if ($silvergold_theme && isset($product['image_options'])) {  ?>
+
+                        <ul class="nav nav-pills pull-right image-option-preview">
+                            <?php if (isset($product['image_options']['name'])) {  ?>
+                            <li role="presentation">
+                                <p><?php echo $product['image_options']['name']; ?></p>
+                            </li>
+                            <?php } ?>
+                            <?php foreach ($product['image_options']['data'] as $image_option) {  ?>
+
+                            <?php if ($image_option['quantity'] <= 0) {  ?>
+                            <li role="presentation" class="disabled">
+                                <a href="#" class="thumbnail" product_option_value_id="<?php echo $image_option['product_option_value_id']; ?>" title="<?php echo $image_option['name']; ?>">
+                                    <img src="<?php echo $image_option['image']; ?>" alt="<?php echo $image_option['name']; ?>">
+                                </a>
+                            </li>
+                            <?php } else { ?>
+                            <li role="presentation">
+                                <a href="#" class="thumbnail " product_option_value_id="<?php echo $image_option['product_option_value_id']; ?>" title="<?php echo $image_option['name']; ?>"  data-form="form-image_option_preview_<?php echo $product['product_id']; ?>">
+                                    <img src="<?php echo $image_option['image']; ?>" alt="<?php echo $image_option['name']; ?>">
+                                </a>
+                            </li>
+                            <?php } ?>
+                            </li>
+                            <?php } ?>
+                        </ul>
+                        <form action="<?php echo $product['href']; ?>" method="post" enctype="multipart/form-data" id="form-image_option_preview_<?php echo $product['product_id']; ?>">
+                            <input type='hidden' name='iop_product_option_value_id' id='iop_product_option_value_id' value=''>
+                        </form>
+                        <?php } ?>
+
+                        <!-- end gun88 -->
+                ]]>
+            </add>
+        </operation>
+        <operation info="Image Option Preview">
+            <search position="before" offset="4"><![CDATA[<button type="button" data-toggle="tooltip" title="<?php echo $button_compare; ?>" onclick="compare.add('<?php echo $product['product_id']; ?>');"><i class="fa fa-exchange"></i></button>]]></search>
+            <add><![CDATA[
+               <!-- gun88 -->
+                        <?php if (!$silvergold_theme && isset($product['image_options'])) {  ?>
+
+                        <ul class="nav nav-pills pull-right image-option-preview">
+                            <?php if (isset($product['image_options']['name'])) {  ?>
+                            <li role="presentation">
+                                <p><?php echo $product['image_options']['name']; ?></p>
+                            </li>
+                            <?php } ?>
+                            <?php foreach ($product['image_options']['data'] as $image_option) {  ?>
+
+                            <?php if ($image_option['quantity'] <= 0) {  ?>
+                            <li role="presentation" class="disabled">
+                                <a href="#" class="thumbnail" product_option_value_id="<?php echo $image_option['product_option_value_id']; ?>" title="<?php echo $image_option['name']; ?>">
+                                    <img src="<?php echo $image_option['image']; ?>" alt="<?php echo $image_option['name']; ?>">
+                                </a>
+                            </li>
+                            <?php } else { ?>
+                            <li role="presentation">
+                                <a href="#" class="thumbnail " product_option_value_id="<?php echo $image_option['product_option_value_id']; ?>" title="<?php echo $image_option['name']; ?>"  data-form="form-image_option_preview_<?php echo $product['product_id']; ?>">
+                                    <img src="<?php echo $image_option['image']; ?>" alt="<?php echo $image_option['name']; ?>">
+                                </a>
+                            </li>
+                            <?php } ?>
+                            </li>
+                            <?php } ?>
+                        </ul>
+                        <form action="<?php echo $product['href']; ?>" method="post" enctype="multipart/form-data" id="form-image_option_preview_<?php echo $product['product_id']; ?>">
+                            <input type='hidden' name='iop_product_option_value_id' id='iop_product_option_value_id' value=''>
+                        </form>
+                        <?php } ?>
+
+                        <!-- end gun88 -->
+                ]]>
+            </add>
+        </operation>
+        <operation info="Image Option Preview">
+            <search position="bottom"><![CDATA[]]></search>
+            <add><![CDATA[
+                    <!-- gun88 -->
+                    <script type="text/javascript">
+                    $('.image-option-preview a').click(function(e){
+                        e.preventDefault();
+                        var target = $( event.target );
+                        if (!$(this).parent("li").hasClass("disabled")){
+                            var productOptionValueId = $(this).attr("product_option_value_id");
+                            var formName = $(this).attr("data-form");
+                            $("#"+formName+" #iop_product_option_value_id").val(productOptionValueId);
+                            $("#"+formName).submit();
+                        }
+                    });
+                    </script>
+                    <!-- end gun88 -->
+                ]]>
+            </add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/*/template/product/" name="product.tpl">
+        <operation info="Image Option Preview">
+            <search position="after"><![CDATA[<?php echo $header; ?>]]></search>
+            <add><![CDATA[
+               <!-- gun88 -->
+                <?php if (isset($image_option_preview_style)) { echo "<style>$image_option_preview_style</style>";} ?>
+                <!-- end gun88 -->
+                ]]>
+            </add>
+        </operation>
+        <operation info="Image Option Preview">
+            <search position="after" offset="16"><![CDATA[<button type="button" data-toggle="tooltip" title="<?php echo $button_compare; ?>" onclick="compare.add('<?php echo $product['product_id']; ?>');"><i class="fa fa-exchange"></i></button>]]></search>
+            <add><![CDATA[
+               <!-- gun88 -->
+                        <?php if ($silvergold_theme && isset($product['image_options'])) {  ?>
+
+                        <ul class="nav nav-pills pull-right image-option-preview">
+                            <?php if (isset($product['image_options']['name'])) {  ?>
+                            <li role="presentation">
+                                <p><?php echo $product['image_options']['name']; ?></p>
+                            </li>
+                            <?php } ?>
+                            <?php foreach ($product['image_options']['data'] as $image_option) {  ?>
+
+                            <?php if ($image_option['quantity'] <= 0) {  ?>
+                            <li role="presentation" class="disabled">
+                                <a href="#" class="thumbnail" product_option_value_id="<?php echo $image_option['product_option_value_id']; ?>" title="<?php echo $image_option['name']; ?>">
+                                    <img src="<?php echo $image_option['image']; ?>" alt="<?php echo $image_option['name']; ?>">
+                                </a>
+                            </li>
+                            <?php } else { ?>
+                            <li role="presentation">
+                                <a href="#" class="thumbnail " product_option_value_id="<?php echo $image_option['product_option_value_id']; ?>" title="<?php echo $image_option['name']; ?>"  data-form="form-image_option_preview_<?php echo $product['product_id']; ?>">
+                                    <img src="<?php echo $image_option['image']; ?>" alt="<?php echo $image_option['name']; ?>">
+                                </a>
+                            </li>
+                            <?php } ?>
+                            </li>
+                            <?php } ?>
+                        </ul>
+                        <form action="<?php echo $product['href']; ?>" method="post" enctype="multipart/form-data" id="form-image_option_preview_<?php echo $product['product_id']; ?>">
+                            <input type='hidden' name='iop_product_option_value_id' id='iop_product_option_value_id' value=''>
+                        </form>
+                        <?php } ?>
+
+                        <!-- end gun88 -->
+                ]]>
+            </add>
+        </operation>
+        <operation info="Image Option Preview">
+            <search position="before" offset="4"><![CDATA[<button type="button" data-toggle="tooltip" title="<?php echo $button_compare; ?>" onclick="compare.add('<?php echo $product['product_id']; ?>');"><i class="fa fa-exchange"></i></button>]]></search>
+            <add><![CDATA[
+               <!-- gun88 -->
+                        <?php if (!$silvergold_theme && isset($product['image_options'])) {  ?>
+
+                        <ul class="nav nav-pills pull-right image-option-preview">
+                            <?php if (isset($product['image_options']['name'])) {  ?>
+                            <li role="presentation">
+                                <p><?php echo $product['image_options']['name']; ?></p>
+                            </li>
+                            <?php } ?>
+                            <?php foreach ($product['image_options']['data'] as $image_option) {  ?>
+
+                            <?php if ($image_option['quantity'] <= 0) {  ?>
+                            <li role="presentation" class="disabled">
+                                <a href="#" class="thumbnail" product_option_value_id="<?php echo $image_option['product_option_value_id']; ?>" title="<?php echo $image_option['name']; ?>">
+                                    <img src="<?php echo $image_option['image']; ?>" alt="<?php echo $image_option['name']; ?>">
+                                </a>
+                            </li>
+                            <?php } else { ?>
+                            <li role="presentation">
+                                <a href="#" class="thumbnail " product_option_value_id="<?php echo $image_option['product_option_value_id']; ?>" title="<?php echo $image_option['name']; ?>"  data-form="form-image_option_preview_<?php echo $product['product_id']; ?>">
+                                    <img src="<?php echo $image_option['image']; ?>" alt="<?php echo $image_option['name']; ?>">
+                                </a>
+                            </li>
+                            <?php } ?>
+                            </li>
+                            <?php } ?>
+                        </ul>
+                        <form action="<?php echo $product['href']; ?>" method="post" enctype="multipart/form-data" id="form-image_option_preview_<?php echo $product['product_id']; ?>">
+                            <input type='hidden' name='iop_product_option_value_id' id='iop_product_option_value_id' value=''>
+                        </form>
+                        <?php } ?>
+
+                        <!-- end gun88 -->
+                ]]>
+            </add>
+        </operation>
+        <operation info="Image Option Preview">
+            <search position="bottom"><![CDATA[]]></search>
+            <add><![CDATA[
+                    <!-- gun88 -->
+                    <script type="text/javascript">
+                    $('.image-option-preview a').click(function(e){
+                        e.preventDefault();
+                        var target = $( event.target );
+                        if (!$(this).parent("li").hasClass("disabled")){
+                            var productOptionValueId = $(this).attr("product_option_value_id");
+                            var formName = $(this).attr("data-form");
+                            $("#"+formName+" #iop_product_option_value_id").val(productOptionValueId);
+                            $("#"+formName).submit();
+                        }
+                    });
+                    </script>
+                    <!-- end gun88 -->
+                ]]>
+            </add>
+        </operation>
+    </file>
+    
+    
+</modification>
