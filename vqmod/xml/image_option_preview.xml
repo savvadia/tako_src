@@ -136,9 +136,9 @@
 
                         <ul class="nav nav-pills pull-right image-option-preview">
                             <?php if (isset($product['image_options']['name'])) {  ?>
-                            <li role="presentation">
+                            <!-- xmrdisa <li role="presentation"> -->
                                 <p><?php echo $product['image_options']['name']; ?></p>
-                            </li>
+                            <!-- </li> -->
                             <?php } ?>
                             <?php foreach ($product['image_options']['data'] as $image_option) {  ?>
 
@@ -175,9 +175,9 @@
 
                         <ul class="nav nav-pills pull-right image-option-preview">
                             <?php if (isset($product['image_options']['name'])) {  ?>
-                            <li role="presentation">
+                            <!-- xmrdisa <li role="presentation"> -->
                                 <p><?php echo $product['image_options']['name']; ?></p>
-                            </li>
+                            <!-- </li> -->
                             <?php } ?>
                             <?php foreach ($product['image_options']['data'] as $image_option) {  ?>
 
@@ -378,9 +378,9 @@
 
                         <ul class="nav nav-pills pull-right image-option-preview">
                             <?php if (isset($product['image_options']['name'])) {  ?>
-                            <li role="presentation">
+                            <!-- xmrdisa <li role="presentation"> -->
                                 <p><?php echo $product['image_options']['name']; ?></p>
-                            </li>
+                            <!-- </li> -->
                             <?php } ?>
                             <?php foreach ($product['image_options']['data'] as $image_option) {  ?>
 
@@ -417,9 +417,9 @@
 
                         <ul class="nav nav-pills pull-right image-option-preview">
                             <?php if (isset($product['image_options']['name'])) {  ?>
-                            <li role="presentation">
+                            <!-- xmrdisa <li role="presentation"> -->
                                 <p><?php echo $product['image_options']['name']; ?></p>
-                            </li>
+                            <!-- </li> -->
                             <?php } ?>
                             <?php foreach ($product['image_options']['data'] as $image_option) {  ?>
 
@@ -487,9 +487,9 @@
 
                         <ul class="nav nav-pills pull-right image-option-preview">
                             <?php if (isset($product['image_options']['name'])) {  ?>
-                            <li role="presentation">
+                            <!-- xmrdisa <li role="presentation"> -->
                                 <p><?php echo $product['image_options']['name']; ?></p>
-                            </li>
+                            <!-- </li> -->
                             <?php } ?>
                             <?php foreach ($product['image_options']['data'] as $image_option) {  ?>
 
@@ -526,9 +526,9 @@
 
                         <ul class="nav nav-pills pull-right image-option-preview">
                             <?php if (isset($product['image_options']['name'])) {  ?>
-                            <li role="presentation">
+                            <!-- xmrdisa <li role="presentation"> -->
                                 <p><?php echo $product['image_options']['name']; ?></p>
-                            </li>
+                            <!-- </li> -->
                             <?php } ?>
                             <?php foreach ($product['image_options']['data'] as $image_option) {  ?>
 
