@@ -1,0 +1,349 @@
+<modification>
+    <id>C2 Multiupload files light</id>
+    <version>1.1.2</version>
+    <vqmver>2.5.1</vqmver>
+    <author>Chumachkin Mikhail Aleksandrovich chumachkin.m@gmail.com</author>
+    <file name="/admin/view/template/common/filemanager.tpl">
+        <operation error="skip"  info="Add multiple attr to input field">
+            <search position="replace"><![CDATA[
+                $('body').prepend('<form enctype="multipart/form-data" id="form-upload" style="display: none;"><input type="file" name="file" value="" /></form>');
+            ]]></search>
+            <add trim="false"><![CDATA[
+                $('body').prepend('<form enctype="multipart/form-data" id="form-upload" style="display: none;"><input id="multiple_upload_file" type="file" multiple name="file[]" value="" /></form>');
+            ]]></add>
+        </operation>
+        <operation error="skip"  info="Change button trigger">
+            <search position="replace"><![CDATA[
+                $('#form-upload input[name=\'file\']').trigger('click');
+            ]]></search>
+            <add trim="false"><![CDATA[
+                $('#form-upload input#multiple_upload_file').trigger('click');
+            ]]></add>
+        </operation>
+        <operation error="skip"  info="Change on timer check value">
+            <search position="replace"><![CDATA[
+                if ($('#form-upload input[name=\'file\']').val() != '') {
+            ]]></search>
+            <add trim="false"><![CDATA[
+                if ($('#form-upload input#multiple_upload_file').val() != '') {
+            ]]></add>
+        </operation>
+        <operation error="skip"  info="Change button trigger">
+            <search position="after"><![CDATA[
+                <button type="button" data-toggle="tooltip" title="<?php echo $button_delete; ?>" id="button-delete" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>
+            ]]></search>
+            <add trim="false"><![CDATA[
+                <button type="button" data-toggle="tooltip" title="<?php echo 'Add to image tab'; ?>" id="button-moveimage" class="btn btn-default"><i class="fa fa-file-image-o"></i></button>
+            ]]></add>
+        </operation>
+        <operation error="skip"  info="Set cookie when change folder">
+            <search position="replace" offset="1"><![CDATA[
+$('#button-parent').on('click', function(e) {
+            ]]></search>
+            <add trim="false"><![CDATA[
+$('#button-parent').on('click', function(e) {
+    e.preventDefault();
+
+    var c2_url = $(this).attr('href');
+
+    var c2_find_start  = c2_url.indexOf('&directory=');
+    var c2_find_finish = c2_url.indexOf('&target=');
+    
+    if ( c2_find_start !== -1 ) {
+        c2_find_start = parseInt(c2_find_start)+11;
+        c2_find_finish = parseInt(c2_find_finish);
+        $.cookie('c2_directory', ''.concat(c2_url.substring(c2_find_start,c2_find_finish)) , { expires: 1} );
+    } else {
+        $.cookie('c2_directory', '/' , { expires: 1} );
+    }
+            ]]></add>
+        </operation>
+        <operation error="skip"  info="Set cookie when change folder">
+            <search position="replace" offset="1"><![CDATA[
+$('a.directory').on('click', function(e) {
+            ]]></search>
+            <add trim="false"><![CDATA[
+$('a.directory').on('click', function(e) {
+    e.preventDefault();
+
+    var c2_url = $(this).attr('href');
+    var c2_find_start  = c2_url.indexOf('&directory=');
+    var c2_find_finish = c2_url.indexOf('&target=');
+
+    if ( c2_find_start !== -1 ) {
+        c2_find_start = parseInt(c2_find_start)+11;
+        c2_find_finish = parseInt(c2_find_finish);
+        $.cookie('c2_directory', ''.concat(c2_url.substring(c2_find_start,c2_find_finish)) , { expires: 1} );
+    }
+            ]]></add>
+        </operation>
+        <operation error="skip"  info="Add code for move image to image tab">
+            <search position="before"><![CDATA[
+$('a.thumbnail').on('click', function(e) {
+            ]]></search>
+            <add trim="false"><![CDATA[
+
+/*!
+ * jQuery Cookie Plugin v1.4.1
+ * https://github.com/carhartl/jquery-cookie
+ *
+ * Copyright 2006, 2014 Klaus Hartl
+ * Released under the MIT license
+ */
+(function (factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD (Register as an anonymous module)
+        define(['jquery'], factory);
+    } else if (typeof exports === 'object') {
+        // Node/CommonJS
+        module.exports = factory(require('jquery'));
+    } else {
+        // Browser globals
+        factory(jQuery);
+    }
+}(function ($) {
+
+    var pluses = /\+/g;
+
+    function encode(s) {
+        return config.raw ? s : encodeURIComponent(s);
+    }
+
+    function decode(s) {
+        return config.raw ? s : decodeURIComponent(s);
+    }
+
+    function stringifyCookieValue(value) {
+        return encode(config.json ? JSON.stringify(value) : String(value));
+    }
+
+    function parseCookieValue(s) {
+        if (s.indexOf('"') === 0) {
+            // This is a quoted cookie as according to RFC2068, unescape...
+            s = s.slice(1, -1).replace(/\\"/g, '"').replace(/\\\\/g, '\\');
+        }
+
+        try {
+            // Replace server-side written pluses with spaces.
+            // If we can't decode the cookie, ignore it, it's unusable.
+            // If we can't parse the cookie, ignore it, it's unusable.
+            s = decodeURIComponent(s.replace(pluses, ' '));
+            return config.json ? JSON.parse(s) : s;
+        } catch(e) {}
+    }
+
+    function read(s, converter) {
+        var value = config.raw ? s : parseCookieValue(s);
+        return $.isFunction(converter) ? converter(value) : value;
+    }
+
+    var config = $.cookie = function (key, value, options) {
+
+        // Write
+
+        if (arguments.length > 1 && !$.isFunction(value)) {
+            options = $.extend({}, config.defaults, options);
+
+            if (typeof options.expires === 'number') {
+                var days = options.expires, t = options.expires = new Date();
+                t.setMilliseconds(t.getMilliseconds() + days * 864e+5);
+            }
+
+            return (document.cookie = [
+                encode(key), '=', stringifyCookieValue(value),
+                options.expires ? '; expires=' + options.expires.toUTCString() : '', // use expires attribute, max-age is not supported by IE
+                options.path    ? '; path=' + options.path : '',
+                options.domain  ? '; domain=' + options.domain : '',
+                options.secure  ? '; secure' : ''
+            ].join(''));
+        }
+
+        // Read
+
+        var result = key ? undefined : {},
+            // To prevent the for loop in the first place assign an empty array
+            // in case there are no cookies at all. Also prevents odd result when
+            // calling $.cookie().
+            cookies = document.cookie ? document.cookie.split('; ') : [],
+            i = 0,
+            l = cookies.length;
+
+        for (; i < l; i++) {
+            var parts = cookies[i].split('='),
+                name = decode(parts.shift()),
+                cookie = parts.join('=');
+
+            if (key === name) {
+                // If second argument (value) is a function it's a converter...
+                result = read(cookie, value);
+                break;
+            }
+
+            // Prevent storing a cookie that we couldn't decode.
+            if (!key && (cookie = read(cookie)) !== undefined) {
+                result[name] = cookie;
+            }
+        }
+
+        return result;
+    };
+
+    config.defaults = {};
+
+    $.removeCookie = function (key, options) {
+        // Must not alter options, thus extending a fresh object...
+        $.cookie(key, '', $.extend({}, options, { expires: -1 }));
+        return !$.cookie(key);
+    };
+
+}));
+
+$( document ).ready(function() {
+    var c2_directory_url = decodeURIComponent($.cookie('c2_directory'));
+    var c2_cur_url = decodeURIComponent('<?php echo $directory; ?>');
+
+    if ( c2_cur_url.length === 0 ) c2_cur_url = '/';
+    if ( c2_directory_url === "undefined" ) c2_directory_url = c2_cur_url;
+
+    if ( c2_cur_url.indexOf(c2_directory_url) === -1 && c2_directory_url.length !== 0 ) {
+        $('#modal-image').load( ''.concat('index.php?route=common/filemanager&token=<?php echo $token; ?>&directory=', encodeURIComponent(c2_directory_url), '&target=<?php echo $target; ?>&thumb=<?php echo $thumb; ?>') );
+    }
+
+});
+
+// Move image to Imagw folder
+$('#button-moveimage').on('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+//    debugger;
+    var cnt = 0 ;
+
+    $.each($('div.modal-content').find('input[type="checkbox"]'), function(){
+        if ( $(this).prop('checked') === true ) {
+            var img_el = $(this).parent().parent().find('img').first();
+        
+            var image_id = parent.image_row; // row index
+            parent.addImage(); // add row in image Tab
+            var cur_block = $('#image-row'.concat(image_id)); // Added block
+    
+            parent.$('#thumb-image' + image_id + ' > img ').attr('src', $(img_el).attr('src'));
+            parent.$('#input-image' + image_id ).val( $(this).attr('value') );
+            cnt++;
+        }
+    });
+
+    if ( cnt > 0) {
+        $('#modal-image').modal('hide');
+        parent.$('a[href="#tab-image"]').trigger('click');
+    } else {
+        alert('Select image files to add it.');
+    }
+});
+
+            ]]></add>
+        </operation>
+    </file>
+    <file name="/admin/controller/common/filemanager.php">
+        <operation error="skip" info="Add variables">
+            <search position="after"><![CDATA[
+        $data['pagination'] = $pagination->render();
+            ]]></search>
+            <add trim="false"><![CDATA[
+            ]]></add>
+        </operation>
+        <operation error="skip" info="Change standart upload function">
+            <search position="before" offset="2"><![CDATA[
+            if (!empty($this->request->files['file']['name']) && is_file($this->request->files['file']['tmp_name'])) {
+            ]]></search>
+            <add trim="false"><![CDATA[
+        if (!$json) {
+            if (!empty($this->request->files['file']['name'])) {
+
+            $file_ary = array();
+
+            if (!empty($this->request->files['file']) ) {
+                $file_count = count($this->request->files['file']['name']);
+                $file_keys = array_keys($this->request->files['file']);
+        
+                for ($i=0; $i<$file_count; $i++) {
+                    foreach ($file_keys as $key) {
+                        $file_ary[$i][$key] = $this->request->files['file'][$key][$i];
+                    }
+                }
+            }
+
+            if (!empty($file_ary) ) {
+                foreach($file_ary as $cur_file) {
+                    if (!empty($cur_file['name']) && is_file($cur_file['tmp_name'])) {
+                        // Sanitize the filename
+                        $filename = basename(html_entity_decode($cur_file['name'], ENT_QUOTES, 'UTF-8'));
+                
+                        // Validate the filename length
+                        if ((utf8_strlen($filename) < 3) || (utf8_strlen($filename) > 255)) {
+                            $json['error'] = $this->language->get('error_filename');
+                        }
+                
+                        // Allowed file extension types
+                        $allowed = array(
+                            'jpg',
+                            'jpeg',
+                            'gif',
+                            'png'
+                        );
+                
+                        if (!in_array(utf8_strtolower(utf8_substr(strrchr($filename, '.'), 1)), $allowed)) {
+                            $json['error'] = $this->language->get('error_filetype');
+                        }
+                
+                        // Allowed file mime types
+                        $allowed = array(
+                            'image/jpeg',
+                            'image/pjpeg',
+                            'image/png',
+                            'image/x-png',
+                            'image/gif'
+                        );
+                
+                        if (!in_array($cur_file['type'], $allowed)) {
+                            $json['error'] = $this->language->get('error_filetype');
+                        }
+                
+                        // Check to see if any PHP files are trying to be uploaded
+                        $content = file_get_contents($cur_file['tmp_name']);
+                
+                        if (preg_match('/\<\?php/i', $content)) {
+                            $json['error'] = $this->language->get('error_filetype');
+                        }
+                
+                        // Return any upload error
+                        if ($cur_file['error'] != UPLOAD_ERR_OK) {
+                            $json['error'] = $this->language->get('error_upload_' . $this->request->files['file']['error']);
+                        }
+                    } else {
+                        $json['error'] = $this->language->get('error_upload');
+                    }
+                }
+            }
+        }
+    }
+
+        if (!$json) {
+            if ( !empty($file_ary) ) {
+                foreach($file_ary as $cur_file) {
+                    $filename = basename(html_entity_decode($cur_file['name'], ENT_QUOTES, 'UTF-8'));
+                    move_uploaded_file($cur_file['tmp_name'], $directory . '/' . $filename);
+                }
+            }
+            $json['success'] = $this->language->get('text_uploaded');
+        } 
+
+        $this->response->addHeader('Content-Type: application/json');
+        $this->response->setOutput(json_encode($json));
+
+        return;
+
+            ]]></add>
+        </operation>
+    </file>
+</modification>
