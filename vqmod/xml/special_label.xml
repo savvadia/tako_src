@@ -1,0 +1,205 @@
+<modification>
+    <id>Special Label</id>
+    <version>1.0</version>
+    <vqmver>2.X</vqmver>
+    <author>gun88</author>
+    <file path="catalog/controller/product/" name="search.php,category.php,special.php,manufacturer.php">
+        <operation info="Special Label">
+            <search position="before"><![CDATA[foreach ($results as $result) {]]></search>
+            <add><![CDATA[
+        // gun88
+        if ($this->config->get('special_label_enabled')) {
+            $this->load->model('module/special_label');
+            $data['text_special'] = $this->model_module_special_label->getLabel((int) $this->config->get('config_language_id'));
+            $data['special_label_style'] = htmlspecialchars_decode($this->config->get('special_label_style'));
+        }
+        // end gun88]]>
+            </add>
+        </operation>
+        <operation info="Special Label">
+            <search position="before"><![CDATA[if ($result['image']) {]]></search>
+            <add><![CDATA[
+          // gun88
+            $special_percentage  = (($this->config->get('special_label_show_sign'))?-1:1)*(((float)$result['special'] && $this->config->get('special_label_show_percentage'))?round(($result['price']-$result['special'])/$result['price']*100):0);
+            // end gun88]]>
+            </add>
+        </operation>
+        <operation info="Special Label">
+            <search position="after"><![CDATA['product_id'  => $result['product_id'],]]></search>
+            <add><![CDATA[
+                // gun88
+                'special_percentage'  => ($special_percentage)?(" " . $special_percentage . "%"):"",
+                // end gun88]]>
+            </add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/*/template/product/" name="search.tpl,special.tpl,category.tpl,manufacturer_info.tpl">
+        <operation info="Special Label">
+            <search position="after"><![CDATA[<?php echo $header; ?>]]></search>
+            <add><![CDATA[                <!-- gun88 -->
+                <?php if (isset($special_label_style)) { echo "<style>$special_label_style</style>";} ?>
+                <!-- end gun88 -->]]>
+            </add>
+        </operation>
+        <operation info="Special Label">
+            <search position="after"><![CDATA[<div class="product-layout product-list col-xs-12">]]></search>
+            <add><![CDATA[
+               <!-- gun88 -->
+                <?php if ($product['special'] && isset($text_special) ) { ?>
+                    <div class="product-discount">
+                        <p><?php echo $text_special; ?> <?php echo $product['special_percentage'] ?></p>
+                    </div>
+                <?php } ?>
+                <!-- end gun88 -->]]>
+            </add>
+        </operation>
+    </file>
+    <file path="catalog/controller/module/" name="bestseller.php,latest.php,special.php">
+        <operation info="Special Label">
+            <search position="before"><![CDATA[foreach ($results as $result) {]]></search>
+            <add><![CDATA[
+        // gun88
+        if ($this->config->get('special_label_enabled')) {
+            $this->load->model('module/special_label');
+            $data['text_special'] = $this->model_module_special_label->getLabel((int) $this->config->get('config_language_id'));
+            $data['special_label_style'] = htmlspecialchars_decode($this->config->get('special_label_style'));
+        }
+        // end gun88]]>
+            </add>
+        </operation>
+        <operation info="Special Label">
+            <search position="before"><![CDATA[if ($result['image']) {]]></search>
+            <add><![CDATA[
+          // gun88
+            $special_percentage  = (($this->config->get('special_label_show_sign'))?-1:1)*(((float)$result['special'] && $this->config->get('special_label_show_percentage'))?round(($result['price']-$result['special'])/$result['price']*100):0);
+            // end gun88]]>
+            </add>
+        </operation>
+        <operation info="Special Label">
+            <search position="after"><![CDATA['product_id'  => $result['product_id'],]]></search>
+            <add><![CDATA[
+                // gun88
+                'special_percentage'  => ($special_percentage)?(" " . $special_percentage . "%"):"",
+                // end gun88]]>
+            </add>
+        </operation>
+    </file>
+    <file path="catalog/controller/module/" name="featured.php">
+        <operation info="Special Label">
+            <search position="before"><![CDATA[foreach ($products as $product_id) {]]></search>
+            <add><![CDATA[
+                // gun88
+        if ((((int) $this->config->get('special_label_enabled')) === 1)) {
+            $this->load->model('module/special_label');
+            $data['text_special'] = $this->model_module_special_label->getLabel((int) $this->config->get('config_language_id'));
+            $data['special_label_style'] = htmlspecialchars_decode($this->config->get('special_label_style'));
+        }
+        // end gun88
+                ]]>
+            </add>
+        </operation>
+        <operation info="Special Label">
+            <search position="before"><![CDATA[if ($product_info['image']) {]]></search>
+            <add><![CDATA[
+          // gun88
+            $special_percentage  = (($this->config->get('special_label_show_sign'))?-1:1)*(((float)$product_info['special'] && $this->config->get('special_label_show_percentage'))?round(($product_info['price']-$product_info['special'])/$product_info['price']*100):0);
+            // end gun88]]>
+            </add>
+        </operation>
+        <operation info="Special Label">
+            <search position="after"><![CDATA['product_id'  => $product_info['product_id'],]]></search>
+            <add><![CDATA[
+                // gun88
+                'special_percentage'  => ($special_percentage)?(" " . $special_percentage . "%"):"",
+                // end gun88]]>
+            </add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/*/template/module/" name="bestseller.tpl,featured.tpl,latest.tpl,special.tpl">
+        <operation info="Special Label">
+            <search position="after"><![CDATA[<h3><?php echo $heading_title; ?></h3>]]></search>
+            <add><![CDATA[
+              <!-- gun88 -->
+                <?php if (isset($special_label_style)) { echo "<style>$special_label_style</style>";} ?>
+                <!-- end gun88 -->
+                ]]>
+            </add>
+        </operation>
+        <operation info="Special Label">
+            <search position="after"><![CDATA[<div class="product-layout col-lg-3 col-md-3 col-sm-6 col-xs-12">]]></search>
+            <add><![CDATA[
+               <!-- gun88 -->
+                    <?php if ($product['special'] && isset($text_special) ) { ?>
+                    <div class="product-discount">
+                        <p><?php echo $text_special; ?> <?php echo $product['special_percentage'] ?></p>
+                    </div>
+                <?php } ?>
+                    <!-- end gun88 -->
+                ]]>
+            </add>
+        </operation>
+        
+    </file>
+    <file path="catalog/view/theme/*/template/product/" name="product.tpl">
+        <operation info="Special Label">
+            <search position="after"><![CDATA[<?php echo $header; ?>]]></search>
+            <add><![CDATA[
+              <!-- gun88 -->
+                <?php if (isset($special_label_style)) { echo "<style>$special_label_style</style>";} ?>
+                <!-- end gun88 -->
+                ]]>
+            </add>
+        </operation>
+        <operation info="Special Label">
+            <search position="after"><![CDATA[<div class="product-thumb transition">]]></search>
+            <add><![CDATA[
+               <!-- gun88 -->
+                    <?php if ($product['special'] && isset($text_special) ) { ?>
+                    <div class="product-discount">
+                        <p><?php echo $text_special; ?> <?php echo $product['special_percentage'] ?></p>
+                    </div>
+                <?php } ?>
+                    <!-- end gun88 -->
+                ]]>
+            </add>
+        </operation>
+         <operation info="Special Label" error='skip'>
+            <search position="replace" index='3'><![CDATA[<div class="<?php echo $class; ?>">]]></search>
+            <add><![CDATA[<div class="<?php echo $class; ?> product-layout"'>]]>
+            </add>
+        </operation>
+    </file>
+    <file path="catalog/controller/product/" name="product.php">
+        <operation info="Special Label">
+            <search position="before"><![CDATA[foreach ($results as $result) {]]></search>
+            <add><![CDATA[
+                // gun88
+        if ((((int) $this->config->get('special_label_enabled')) === 1)) {
+            $this->load->model('module/special_label');
+            $data['text_special'] = $this->model_module_special_label->getLabel((int) $this->config->get('config_language_id'));
+            $data['special_label_style'] = htmlspecialchars_decode($this->config->get('special_label_style'));
+        }
+        // end gun88
+                ]]>
+            </add>
+        </operation>
+        <operation info="Special Label">
+            <search position="before"><![CDATA[if ($result['image']) {]]></search>
+            <add><![CDATA[
+          // gun88
+            $special_percentage  = (($this->config->get('special_label_show_sign'))?-1:1)*(((float)$result['special'] && $this->config->get('special_label_show_percentage'))?round(($result['price']-$result['special'])/$result['price']*100):0);
+            // end gun88]]>
+            </add>
+        </operation>
+        <operation info="Special Label">
+            <search position="after"><![CDATA['product_id'  => $result['product_id'],]]></search>
+            <add><![CDATA[
+                // gun88
+                'special_percentage'  => ($special_percentage)?(" " . $special_percentage . "%"):"",
+                // end gun88]]>
+            </add>
+        </operation>
+       
+    </file>
+    
+</modification>
