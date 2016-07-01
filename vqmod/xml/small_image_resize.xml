@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+<id><![CDATA[Small image resize, never scale to increase small image]]></id>
+<version><![CDATA[1.0]]></version>
+<vqmver><![CDATA[2.5.0]]></vqmver>
+<author><![CDATA[Diana Savvatina]]></author>
+
+<file name="system/library/image.php" error="log">
+	<operation>
+		<search position="replace"><![CDATA[$scale = min($scale_w, $scale_h);]]></search>
+		<add><![CDATA[$scale = min($scale_w, $scale_h, 1); // never scale to increase]]></add>
+	</operation>
+	<operation>
+		<search position="replace"><![CDATA[if ($scale == 1 && $scale_h == $scale_w && $this->mime != 'image/png') {]]></search>
+		<add><![CDATA[if ($scale == 1 && $width == $this->width && $scale_h == $scale_w && $this->mime != 'image/png') {]]></add>
+	</operation>
+</file>
+
+</modification>
