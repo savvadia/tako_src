@@ -1,0 +1,125 @@
+<modification>
+	<id>Add orders tab to customer page</id>
+	<version>1.0.2</version>
+	<vqmver>2.x</vqmver>
+	<author>Dennis Mortensgaard (DoWEB I/S)</author>
+	<file name="admin/view/template/customer/customer_form.tpl">
+		<operation> 
+		<search position="after"><![CDATA[<li><a href="#tab-ip" data-toggle="tab"><?php echo $tab_ip; ?></a></li>]]></search>
+		<add>
+			<![CDATA[<li><a href="#tab-orders" data-toggle="tab"><?php echo $tab_orders; ?></a></li>]]>
+		</add>
+	</operation>
+	<operation>
+		<search position="before"><![CDATA[$('#ip').load('index.php?route=customer/customer/ip&token=<?php echo $token; ?>&customer_id=<?php echo $customer_id; ?>');]]></search>
+		<add>
+			<![CDATA[$('#orders').load('index.php?route=customer/customer/orders&token=<?php echo $token; ?>&customer_id=<?php echo $customer_id; ?>&sort=o.date_added');]]>
+		</add>
+	</operation> 
+	<operation>
+		<search position="before"><![CDATA[<div class="tab-pane" id="tab-ip">]]></search>
+		<add>
+			<![CDATA[ 
+			<div class="tab-pane" id="tab-orders">
+              <div id="orders"></div>
+            </div>
+			]]>
+		</add>
+	</operation> 
+	</file>
+	<file name="admin/language/*/customer/customer.php">
+		<operation> 
+		<search position="before"><![CDATA[$_['error_custom_field']]]></search>
+		<add>
+			<![CDATA[$_['tab_orders']         = 'Order history';]]>
+		</add>
+	</operation> 
+	</file>
+
+
+	<file name="admin/controller/customer/customer.php">
+	<operation> 
+		<search position="after"><![CDATA[$data['tab_ip'] = $this->language->get('tab_ip');]]></search>
+		<add>
+			<![CDATA[$data['tab_orders'] = $this->language->get('tab_orders');]]>
+		</add>
+	</operation>
+		
+	<operation> 
+		<search position="before"><![CDATA[public function ip() {]]></search>
+		<add>
+			<![CDATA[
+				public function orders() {
+					$this->load->language('sale/order');
+
+					$this->load->model('sale/order');
+
+					$data['text_no_results'] = $this->language->get('text_no_results');
+					$data['text_see_order'] = $this->language->get('text_see_order');
+					$data['text_loading'] = $this->language->get('text_loading');
+
+					$data['column_order_id'] = $this->language->get('column_order_id');
+					$data['column_status'] = $this->language->get('column_status');
+					$data['column_date_added'] = $this->language->get('column_date_added');
+					$data['column_date_modified'] = $this->language->get('column_date_modified');
+					$data['column_total'] = $this->language->get('column_total');
+					$data['column_action'] = $this->language->get('column_action');
+
+					if (isset($this->request->get['page'])) {
+						$page = $this->request->get['page'];
+					} else {
+						$page = 1;
+					}
+
+					$data['orders'] = array();
+
+					$results = $this->model_sale_order->getOrders(array('filter_customerid' => $this->request->get['customer_id'], 'sort' => $this->request->get['sort'], 'order' => 'DESC'));
+
+					foreach ($results as $result) {
+						
+						$data['orders'][] = array(
+							'id'         => $result['order_id'],
+							'status'      => $result['order_status'],
+							'date_added' => date('d/m/y', strtotime($result['date_added'])),
+							'date_modified' => date('d/m/y', strtotime($result['date_modified'])),
+							'action_view'  => $this->url->link('sale/order/info', 'token=' . $this->session->data['token'] . '&order_id=' . $result['order_id'], 'SSL'),
+							'action_edit'  => $this->url->link('sale/order/edit', 'token=' . $this->session->data['token'] . '&order_id=' . $result['order_id'], 'SSL'),
+							'total'     => $this->currency->format($result['total'], $result['currency_code'], $result['currency_value'])
+						);
+					}
+
+					$this->response->setOutput($this->load->view('customer/customer_orders.tpl', $data));
+				}
+			]]>
+		</add>
+	</operation> 
+
+	</file>
+	<file name="admin/model/sale/order.php">
+		<operation> 
+		<search position="before"><![CDATA[if (!empty($data['filter_customer'])) {]]></search>
+		<add>
+			<![CDATA[
+			if (!empty($data['filter_customerid'])) {
+				$sql .= " AND o.customer_id = " . $this->db->escape($data['filter_customerid']);
+			}
+			]]>
+		</add>
+	</operation> 
+	<operation>
+		<search position="before"><![CDATA[public function getTotalOrdersByOrderStatusId($order_status_id) {]]></search>
+		<add>
+			<![CDATA[
+				public function getTotalOrdersByCustomerId($customer_id) {
+					$query = $this->db->query("SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "order` WHERE customer_id = '" . (int)$customer_id . "' AND order_status_id > '0'");
+
+					return $query->row['total'];
+				}
+			]]>
+		</add>
+	</operation>
+	</file>
+	
+
+	
+</modification>
